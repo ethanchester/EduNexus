@@ -468,6 +468,47 @@
             background: #8e75c7;
         }
 
+        .admin-site-panel {
+            width: min(600px, 100%);
+            margin: 12px auto 18px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+        }
+
+        .admin-site-panel[hidden] {
+            display: none;
+        }
+
+        .admin-site-panel label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .admin-site-panel input,
+        .admin-site-panel select {
+            width: 100%;
+            padding: 9px;
+            color: white;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .admin-site-panel select option {
+            color: white;
+            background: #2e3244;
+        }
+
+        .admin-site-panel button {
+            margin: 12px 8px 0 0;
+            padding: 9px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            background: #704caf;
+            cursor: pointer;
+        }
+
         .letter-header {
             color: white;
             font-size: 32px;
@@ -984,6 +1025,25 @@
 
                 <h2 class="subheading">Game Sites:</h2>
                 <div id="game-site-list" class="game-site-list" aria-label="Game sites"></div>
+                <div class="subheading">
+                    <button id="admin-sites-btn" class="game-site-btn" type="button">Admin: Add Game Site</button>
+                </div>
+                <form id="admin-site-panel" class="admin-site-panel" hidden>
+                    <strong>Add a game site</strong>
+                    <p class="bg-open-hint">Sites are saved in this browser only; shared updates need a server or a site-list code update.</p>
+                    <label for="admin-site-name">Display name</label>
+                    <input id="admin-site-name" required maxlength="60" autocomplete="off">
+                    <label for="admin-site-type">Type</label>
+                    <select id="admin-site-type">
+                        <option value="file">Game file from the game library</option>
+                        <option value="github">GitHub HTML document (raw or blob URL)</option>
+                        <option value="website">Website URL</option>
+                    </select>
+                    <label id="admin-site-value-label" for="admin-site-value">Game file name</label>
+                    <input id="admin-site-value" required maxlength="500" autocomplete="off" placeholder="Example: clceleste">
+                    <button type="submit">Save Game Site</button>
+                    <button id="admin-site-cancel" type="button">Cancel</button>
+                </form>
 
                 <h2 class="subheading">
                     Make a sugestion:
@@ -1021,9 +1081,22 @@
             {
                 id: "nature",
                 name: "Nature",
-                url: "https://raw.githubusercontent.com/ethanchester/schoolisbootybro/refs/heads/main/nature"
+                type: "github",
+                value: "https://raw.githubusercontent.com/ethanchester/schoolisbootybro/refs/heads/main/nature"
             }
         ];
+        const SITE_STORAGE_KEY = "dancing-bunny-custom-sites-v1";
+        let customGameSites = [];
+        try {
+            const savedSites = JSON.parse(localStorage.getItem(SITE_STORAGE_KEY) || "[]");
+            if (Array.isArray(savedSites)) {
+                customGameSites = savedSites.filter(site =>
+                    site && typeof site.name === "string" &&
+                    ["file", "github", "website"].includes(site.type) &&
+                    typeof site.value === "string"
+                );
+            }
+        } catch (e) { }
 
         const GAME_BASES = [
             "https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@latest/UGS-Files/",
@@ -2420,7 +2493,7 @@
             if (!list) return;
 
             list.innerHTML = "";
-            GAME_SITES.forEach(site => {
+            [...GAME_SITES, ...customGameSites].forEach(site => {
                 const button = document.createElement("button");
                 button.type = "button";
                 button.className = "game-site-btn";
@@ -2430,10 +2503,93 @@
             });
         }
 
+        const ADMIN_PASSWORD = "3Dsigma!!!";
+
+        function setupAdminSiteEditor() {
+            const adminButton = document.getElementById("admin-sites-btn");
+            const panel = document.getElementById("admin-site-panel");
+            const typeSelect = document.getElementById("admin-site-type");
+            const valueLabel = document.getElementById("admin-site-value-label");
+            const valueInput = document.getElementById("admin-site-value");
+
+            adminButton.addEventListener("click", () => {
+                if (panel.hidden) {
+                    if (prompt("Enter the admin password:") !== ADMIN_PASSWORD) {
+                        alert("Incorrect password.");
+                        return;
+                    }
+                    panel.hidden = false;
+                } else {
+                    panel.hidden = true;
+                }
+            });
+
+            typeSelect.addEventListener("change", () => {
+                const isFile = typeSelect.value === "file";
+                valueLabel.textContent = isFile ? "Game file name" : "URL";
+                valueInput.placeholder = isFile
+                    ? "Example: clceleste"
+                    : typeSelect.value === "github"
+                        ? "Raw GitHub URL or github.com/.../blob/... URL"
+                        : "https://example.com";
+            });
+
+            document.getElementById("admin-site-cancel").addEventListener("click", () => {
+                panel.hidden = true;
+                panel.reset();
+            });
+
+            panel.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const name = document.getElementById("admin-site-name").value.trim();
+                const type = typeSelect.value;
+                let value = valueInput.value.trim();
+                if (!name || !value) return;
+
+                if (type === "file") {
+                    value = normalizeFileName(value);
+                } else {
+                    try {
+                        const url = new URL(value);
+                        if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error();
+                        if (type === "github" && !/(^|\.)github\.com$|(^|\.)githubusercontent\.com$/.test(url.hostname)) {
+                            throw new Error();
+                        }
+                    } catch (e) {
+                        alert(type === "github"
+                            ? "Enter a valid GitHub or raw.githubusercontent.com URL."
+                            : "Enter a valid http:// or https:// URL.");
+                        return;
+                    }
+                }
+
+                customGameSites.push({
+                    id: `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                    name,
+                    type,
+                    value
+                });
+                try {
+                    localStorage.setItem(SITE_STORAGE_KEY, JSON.stringify(customGameSites));
+                } catch (e) {
+                    alert("Could not save this site in browser storage.");
+                }
+                renderGameSites();
+                panel.reset();
+                typeSelect.dispatchEvent(new Event("change"));
+                panel.hidden = true;
+            });
+        }
+        setupAdminSiteEditor();
+
         async function openGameSiteTab(site) {
+            if (site.type === "file") {
+                openGameTab(site.value);
+                return;
+            }
+
             const id = `site-${site.id}`;
             const title = site.name;
-
             if (tabs.has(id)) {
                 activateTab(id);
                 return;
@@ -2441,19 +2597,26 @@
 
             const tab = openLoadingTab(id, title);
             try {
-                const response = await fetch(site.url);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-                let html = await response.text();
-                html = injectBaseHref(injectAutoclickSupport(injectMuteSupport(html, isMuted)), site.url);
-
                 const iframe = document.createElement("iframe");
                 iframe.className = "game-frame";
                 iframe.title = title;
-                iframe.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups allow-modals");
                 iframe.referrerPolicy = "no-referrer";
-                iframe.srcdoc = html;
+                iframe.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups allow-modals");
                 applyMuteToIframe(iframe);
+
+                if (site.type === "website") {
+                    iframe.src = site.value;
+                } else {
+                    const githubUrl = site.value.replace(
+                        /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/,
+                        "https://raw.githubusercontent.com/$1/$2/$3/$4"
+                    );
+                    const response = await fetch(githubUrl);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    let html = await response.text();
+                    html = injectBaseHref(injectAutoclickSupport(injectMuteSupport(html, isMuted)), githubUrl);
+                    iframe.srcdoc = html;
+                }
                 tab.panel.replaceChildren(iframe);
             } catch (err) {
                 const loadingText = tab.panel.querySelector(`#loading-text-${id}`);

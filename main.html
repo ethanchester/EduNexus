@@ -14,11 +14,11 @@
        1. Root Variables & Reset
        ========================================================================== */
         :root {
-            --bg1: #2e3244;
-            --bg2: #561a86;
-            --text: #ffffff;
-            --tab-bg: rgba(0, 0, 0, 0.28);
-            --tab-active: rgba(176, 0, 230, 0.28);
+            --bg1: #171a2b;
+            --bg2: #49267a;
+            --text: #f5f6fa;
+            --tab-bg: rgba(16, 18, 30, 0.72);
+            --tab-active: rgba(126, 87, 194, 0.35);
             --sidebar-w: 150px;
             --topbar-h: 58px;
         }
@@ -32,10 +32,10 @@
             margin: 0;
             width: 100%;
             height: 100%;
-            font-family: 'Comic Sans MS', sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             color: var(--text);
             overflow: hidden;
-            background: linear-gradient(135deg, #2e3244 30%, #561a86 100%);
+            background: linear-gradient(135deg, #171a2b 0%, #292044 55%, #49267a 100%);
             background-attachment: fixed;
         }
 
@@ -82,9 +82,9 @@
             align-items: stretch;
             gap: 8px;
             padding: 8px 10px;
-            background: rgba(0, 0, 0, 0.22);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 17, 28, 0.78);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             overflow-x: auto;
             overflow-y: hidden;
             flex: 0 0 auto;
@@ -108,7 +108,7 @@
             background: var(--tab-bg);
             color: #fff;
             padding: 0 12px;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             flex: 0 0 auto;
             max-width: 240px;
@@ -319,8 +319,8 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            background: rgba(86, 26, 134, 0.94);
-            backdrop-filter: blur(10px);
+            background: rgba(35, 28, 58, 0.94);
+            backdrop-filter: blur(16px);
             padding: 16px 8px;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
             z-index: 1000;
@@ -352,7 +352,7 @@
         }
 
         .sidebar-btn:hover {
-            background: #a369d3;
+            background: #8e75c7;
             transform: scale(1.04);
         }
 
@@ -429,9 +429,11 @@
             color: white;
             text-align: center;
             margin: 10px 0 18px;
-            font-size: clamp(3rem, 7vw, 5rem);
-            font-family: 'Comic Sans MS', sans-serif;
-            text-shadow: -5px 5px 0px #b000e6, -10px 10px 0px #610070, 2px 2px 2px rgba(206, 89, 55, 0);
+            font-size: clamp(2.5rem, 6vw, 4.2rem);
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.055em;
+            text-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
         }
 
         .subheading {
@@ -456,14 +458,14 @@
             padding: 8px 16px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 8px;
-            background: rgba(86, 26, 134, 0.8);
+            background: rgba(112, 76, 175, 0.34);
             color: white;
             font: inherit;
             cursor: pointer;
         }
 
         .game-site-btn:hover {
-            background: #a369d3;
+            background: #8e75c7;
         }
 
         .letter-header {
@@ -516,7 +518,7 @@
         }
 
         #random-game-btn:hover {
-            background: #a369d3;
+            background: #8e75c7;
             transform: scale(1);
             box-shadow: 0 0 15px rgba(176, 0, 230, 0.4);
         }
@@ -538,14 +540,14 @@
         }
 
         input[type="button"] {
-            background: #561a86;
-            border: none;
+            background: rgba(112, 76, 175, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 15px 30px;
             font-size: 16px;
-            font-weight: 500;
-            border-radius: 8px;
+            font-weight: 600;
+            border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
             transition: all 0.3s ease;
             width: 100%;
             max-width: 600px;
@@ -556,7 +558,7 @@
         input[type="button"]:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-            background: #a369d3;
+            background: #8e75c7;
         }
 
         input[type="button"]:active {
@@ -684,9 +686,9 @@
             font-size: 16px;
             font-weight: 500;
             color: white;
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px solid rgba(255, 255, 255, 0.12);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            border-radius: 14px;
             cursor: pointer;
             backdrop-filter: blur(5px);
             transition: all 0.25s ease;
@@ -813,11 +815,11 @@
         #doc-btn,
         #open-recent-btn,
         #open-bookmarklet-runner-btn {
-            font-family: Comic Sans MS, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             background: none;
             border: 2px solid rgba(176, 0, 230 0.25);
             border-radius: 8px;
-            color: #b000e6;
+            color: #9b7bea;
             font-size: 18px;
             cursor: pointer;
             padding: 0 12px;
@@ -883,6 +885,34 @@
             .runner-grid {
                 grid-template-columns: 1fr;
             }
+        }
+
+        /* Square corners give the interface blocks a crisp, rectangular look. */
+        .tab-btn,
+        .tab-close,
+        #autoclick-btn,
+        #refresh-favicon-btn,
+        #bgrun-btn,
+        #mute-btn,
+        #info-btn,
+        .sidebar-btn,
+        .game-site-btn,
+        #gameSearch,
+        #random-game-btn,
+        input[type="button"],
+        .star-btn,
+        .recent-card,
+        .runner-textarea,
+        .runner-controls button,
+        #open-runner-btn,
+        #open-proxy-btn,
+        #force-open-proxy-btn,
+        #open-form-btn,
+        #doc-btn,
+        #open-recent-btn,
+        #open-bookmarklet-runner-btn,
+        #proxy-selector {
+            border-radius: 0;
         }
     </style>
 </head>

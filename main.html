@@ -1077,13 +1077,9 @@
 
 
     <script>
+        // Keep built-in sites as [display name, URL] pairs; their order is preserved.
         const GAME_SITES = [
-            {
-                id: "nature",
-                name: "Nature",
-                type: "github",
-                value: "https://raw.githubusercontent.com/ethanchester/schoolisbootybro/refs/heads/main/nature"
-            }
+            ["Nature", "https://raw.githubusercontent.com/ethanchester/schoolisbootybro/refs/heads/main/nature"]
         ];
         const SITE_STORAGE_KEY = "dancing-bunny-custom-sites-v1";
         let customGameSites = [];
@@ -2493,7 +2489,15 @@
             if (!list) return;
 
             list.innerHTML = "";
-            [...GAME_SITES, ...customGameSites].forEach(site => {
+            const builtInSites = GAME_SITES.map(([name, value], index) => ({
+                id: `builtin-${index}`,
+                name,
+                value,
+                type: /^https?:\/\/(?:raw\.githubusercontent\.com|github\.com|rawgit\.com)(?:\/|$)/i.test(value)
+                    ? "github"
+                    : "website"
+            }));
+            [...builtInSites, ...customGameSites].forEach(site => {
                 const button = document.createElement("button");
                 button.type = "button";
                 button.className = "game-site-btn";

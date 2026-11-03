@@ -509,6 +509,31 @@
             cursor: pointer;
         }
 
+        #admin-site-list {
+            margin-top: 20px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-site-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            overflow-wrap: anywhere;
+        }
+
+        .admin-site-row span {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .admin-site-row button {
+            flex: 0 0 auto;
+            margin: 0;
+        }
+
         .letter-header {
             color: white;
             font-size: 32px;
@@ -1026,7 +1051,7 @@
                 <h2 class="subheading">Game Sites:</h2>
                 <div id="game-site-list" class="game-site-list" aria-label="Game sites"></div>
                 <div class="subheading">
-                    <button id="admin-sites-btn" class="game-site-btn" type="button">Admin: Add Game Site</button>
+                    <button id="admin-sites-btn" class="game-site-btn" type="button">Manage Game Sites</button>
                 </div>
                 <form id="admin-site-panel" class="admin-site-panel" hidden>
                     <strong>Add a game site</strong>
@@ -1041,8 +1066,9 @@
                     </select>
                     <label id="admin-site-value-label" for="admin-site-value">Game file name</label>
                     <input id="admin-site-value" required maxlength="500" autocomplete="off" placeholder="Example: clceleste">
-                    <button type="submit">Save Game Site</button>
+                    <button id="admin-site-save" type="submit">Save Game Site</button>
                     <button id="admin-site-cancel" type="button">Cancel</button>
+                    <div id="admin-site-list" aria-label="Saved custom game sites"></div>
                 </form>
 
                 <h2 class="subheading">
@@ -1077,10 +1103,20 @@
 
 
     <script>
-        // Keep built-in sites as [display name, URL] pairs; their order is preserved.
-        const GAME_SITES = [
-            ["Nature", "https://raw.githubusercontent.com/ethanchester/schoolisbootybro/refs/heads/main/nature"]
+        // Remote site catalogs are loaded in file order; site pages load only when clicked.
+        const SITE_LISTS = [
+            {
+                url: "https://raw.githubusercontent.com/ethanchester/schoolisbootybro/refs/heads/main/rawgitsites",
+                type: "github"
+            },
+            {
+                url: "https://raw.githubusercontent.com/ethanchester/schoolisbootybro/refs/heads/main/websites",
+                type: "website"
+            }
         ];
+        let remoteGameSites = [];
+        let remoteSitesLoaded = false;
+        let remoteSitesError = false;
         const SITE_STORAGE_KEY = "dancing-bunny-custom-sites-v1";
         let customGameSites = [];
         try {
@@ -2484,30 +2520,168 @@
             }
         }
 
+        function parseRemoteSiteList(text, type, sourceIndex) {
+            let entries = null;
+            try {
+                const parsed = JSON.parse(text);
+                if (Array.isArray(parsed)) entries = parsed;
+            } catch (e) { }
+
+            const sites = [];
+            const addSite = (name, value) => {
+                if (typeof value !== "string") return;
+                value = value.trim();
+                try {
+                    const url = new URL(value);
+                    if (url.protocol !== "https:" && url.protocol !== "http:") return;
+                    sites.push({ id: `remote-${sourceIndex}-${sites.length}`, name: String(name || siteNameFromUrl(value)).trim(), value, type });
+                } catch (e) { }
+            };
+
+            if (entries) {
+                entries.forEach(entry => {
+                    if (Array.isArray(entry)) addSite(entry[0], entry[1]);
+                    else if (entry && typeof entry === "object") addSite(entry.name, entry.url || entry.value);
+                });
+            }
+
+            if (sites.length === 0) {
+                const pairPattern = /[\"']([^\"']+)[\"']\s*,\s*[\"'](https?:\/\/[^\"']+)[\"']/g;
+                let match;
+                while ((match = pairPattern.exec(text))) addSite(match[1], match[2]);
+            }
+
+            if (sites.length === 0) {
+                text.split(/\r?\n/).forEach(line => {
+                    line = line.trim();
+                    if (!line || line.startsWith("#")) return;
+                    const urlMatch = line.match(/https?:\/\/\S+/);
+                    if (!urlMatch) return;
+                    const value = urlMatch[0].replace(/[\],;]+$/, "");
+                    const name = line.slice(0, urlMatch.index).replace(/[\[\]\\\"'|,:=-]+$/g, "").trim();
+                    addSite(name, value);
+                });
+            }
+            return sites;
+        }
+
+        function siteNameFromUrl(value) {
+            try {
+                const url = new URL(value);
+                const lastPart = decodeURIComponent(url.pathname.split("/").filter(Boolean).pop() || url.hostname);
+                return lastPart.replace(/\.html?$/i, "") || url.hostname;
+            } catch (e) {
+                return "Website";
+            }
+        }
+
+        async function loadRemoteGameSites() {
+            const results = await Promise.all(SITE_LISTS.map(async (source, index) => {
+                try {
+                    const response = await fetch(source.url, { cache: "no-store" });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return parseRemoteSiteList(await response.text(), source.type, index);
+                } catch (e) {
+                    remoteSitesError = true;
+                    return [];
+                }
+            }));
+            remoteGameSites = results.flat();
+            remoteSitesLoaded = true;
+            renderGameSites();
+        }
+
         function renderGameSites() {
             const list = document.getElementById("game-site-list");
             if (!list) return;
 
             list.innerHTML = "";
-            const builtInSites = GAME_SITES.map(([name, value], index) => ({
-                id: `builtin-${index}`,
-                name,
-                value,
-                type: /^https?:\/\/(?:raw\.githubusercontent\.com|github\.com|rawgit\.com)(?:\/|$)/i.test(value)
-                    ? "github"
-                    : "website"
-            }));
-            [...builtInSites, ...customGameSites].forEach(site => {
+            if (!remoteSitesLoaded) {
+                const status = document.createElement("span");
+                status.className = "bg-open-hint";
+                status.textContent = "Loading game sites…";
+                list.appendChild(status);
+            } else if (remoteGameSites.length === 0) {
+                const status = document.createElement("span");
+                status.className = "bg-open-hint";
+                status.textContent = remoteSitesError
+                    ? "Could not load the remote game-site lists."
+                    : "No game sites found in the remote lists.";
+                list.appendChild(status);
+            }
+
+            [...remoteGameSites, ...customGameSites].forEach(site => {
                 const button = document.createElement("button");
                 button.type = "button";
                 button.className = "game-site-btn";
                 button.textContent = site.name;
+                button.title = site.value;
                 button.onclick = () => openGameSiteTab(site);
                 list.appendChild(button);
             });
         }
 
-        const ADMIN_PASSWORD = "3Dsigma!!!";
+        let editingCustomSiteId = null;
+
+        function renderAdminSiteList() {
+            const list = document.getElementById("admin-site-list");
+            if (!list) return;
+            list.replaceChildren();
+
+            const heading = document.createElement("strong");
+            heading.textContent = "Saved custom sites";
+            list.appendChild(heading);
+
+            if (customGameSites.length === 0) {
+                const empty = document.createElement("p");
+                empty.className = "bg-open-hint";
+                empty.textContent = "No custom sites saved yet.";
+                list.appendChild(empty);
+                return;
+            }
+
+            customGameSites.forEach(site => {
+                const row = document.createElement("div");
+                row.className = "admin-site-row";
+                const label = document.createElement("span");
+                label.textContent = `${site.name} — ${site.value}`;
+                row.appendChild(label);
+
+                const editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.textContent = "Edit";
+                editButton.addEventListener("click", () => {
+                    editingCustomSiteId = site.id;
+                    document.getElementById("admin-site-name").value = site.name;
+                    typeSelect.value = site.type;
+                    valueInput.value = site.value;
+                    typeSelect.dispatchEvent(new Event("change"));
+                    document.getElementById("admin-site-save").textContent = "Update Game Site";
+                    valueInput.scrollIntoView({ behavior: "smooth", block: "center" });
+                });
+                row.appendChild(editButton);
+
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.textContent = "Delete";
+                deleteButton.addEventListener("click", () => {
+                    customGameSites = customGameSites.filter(item => item.id !== site.id);
+                    saveCustomGameSites();
+                    renderGameSites();
+                    renderAdminSiteList();
+                });
+                row.appendChild(deleteButton);
+                list.appendChild(row);
+            });
+        }
+
+        function saveCustomGameSites() {
+            try {
+                localStorage.setItem(SITE_STORAGE_KEY, JSON.stringify(customGameSites));
+            } catch (e) {
+                alert("Could not save this site in browser storage.");
+            }
+        }
 
         function setupAdminSiteEditor() {
             const adminButton = document.getElementById("admin-sites-btn");
@@ -2517,15 +2691,8 @@
             const valueInput = document.getElementById("admin-site-value");
 
             adminButton.addEventListener("click", () => {
-                if (panel.hidden) {
-                    if (prompt("Enter the admin password:") !== ADMIN_PASSWORD) {
-                        alert("Incorrect password.");
-                        return;
-                    }
-                    panel.hidden = false;
-                } else {
-                    panel.hidden = true;
-                }
+                panel.hidden = !panel.hidden;
+                if (!panel.hidden) renderAdminSiteList();
             });
 
             typeSelect.addEventListener("change", () => {
@@ -2539,8 +2706,11 @@
             });
 
             document.getElementById("admin-site-cancel").addEventListener("click", () => {
-                panel.hidden = true;
+                editingCustomSiteId = null;
                 panel.reset();
+                document.getElementById("admin-site-save").textContent = "Save Game Site";
+                typeSelect.dispatchEvent(new Event("change"));
+                panel.hidden = true;
             });
 
             panel.addEventListener("submit", (event) => {
@@ -2567,24 +2737,30 @@
                     }
                 }
 
-                customGameSites.push({
-                    id: `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-                    name,
-                    type,
-                    value
-                });
-                try {
-                    localStorage.setItem(SITE_STORAGE_KEY, JSON.stringify(customGameSites));
-                } catch (e) {
-                    alert("Could not save this site in browser storage.");
+                if (editingCustomSiteId) {
+                    const existing = customGameSites.find(site => site.id === editingCustomSiteId);
+                    if (existing) Object.assign(existing, { name, type, value });
+                    editingCustomSiteId = null;
+                } else {
+                    customGameSites.push({
+                        id: `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                        name,
+                        type,
+                        value
+                    });
                 }
+                saveCustomGameSites();
                 renderGameSites();
+                renderAdminSiteList();
                 panel.reset();
+                document.getElementById("admin-site-save").textContent = "Save Game Site";
                 typeSelect.dispatchEvent(new Event("change"));
                 panel.hidden = true;
             });
         }
         setupAdminSiteEditor();
+        renderGameSites();
+        loadRemoteGameSites();
 
         async function openGameSiteTab(site) {
             if (site.type === "file") {
@@ -2610,6 +2786,32 @@
 
                 if (site.type === "website") {
                     iframe.src = site.value;
+
+                    const websiteWrap = document.createElement("div");
+                    websiteWrap.style.cssText = "display:flex; flex-direction:column; width:100%; height:100%; background:#171a2b;";
+
+                    const fallback = document.createElement("div");
+                    fallback.style.cssText = "display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; padding:10px 14px; color:#fff; background:#25213a; font-size:14px;";
+
+                    const hint = document.createElement("span");
+                    hint.textContent = "If this website is blocked in the frame, open it in a new tab:";
+                    fallback.appendChild(hint);
+
+                    const openButton = document.createElement("button");
+                    openButton.type = "button";
+                    openButton.textContent = "Open Website in New Tab";
+                    openButton.style.cssText = "padding:8px 12px; border:1px solid rgba(255,255,255,.3); background:#704caf; color:#fff; cursor:pointer; font:inherit;";
+                    openButton.addEventListener("click", () => {
+                        window.open(site.value, "_blank", "noopener,noreferrer");
+                    });
+                    fallback.appendChild(openButton);
+
+                    iframe.style.flex = "1 1 auto";
+                    iframe.style.height = "auto";
+                    iframe.style.minHeight = "0";
+                    websiteWrap.append(fallback, iframe);
+                    tab.panel.replaceChildren(websiteWrap);
+                    return;
                 } else {
                     const githubUrl = site.value.replace(
                         /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/,

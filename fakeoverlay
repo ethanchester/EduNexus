@@ -1,1 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Tutoring Assignments</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; --ink: #23314a; --muted: #68758a; --blue: #4169d8; --line: #e4e9f2; --mint: #e8f5ee; }
+    body { margin: 0; min-height: 100vh; background: #f4f6fb; color: var(--ink); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    header { background: #fff; border-bottom: 1px solid var(--line); }
+    .topbar, main { width: min(1050px, calc(100% - 40px)); margin: auto; }
+    .topbar { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: 1.1rem; font-weight: 750; }
+    .brand-icon { display: grid; place-items: center; width: 38px; height: 38px; color: white; background: var(--blue); border-radius: 12px; }
+    .tagline { color: var(--muted); font-size: .9rem; }
+    main { margin: 36px auto 56px; }
+    .welcome { margin-bottom: 24px; }
+    .welcome h1 { margin: 0 0 7px; font-size: clamp(1.8rem, 5vw, 2.35rem); letter-spacing: -.04em; }
+    .welcome p { margin: 0; color: var(--muted); line-height: 1.55; }
+    .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+    .stat { padding: 16px 18px; background: #fff; border: 1px solid var(--line); border-radius: 14px; }
+    .stat strong { display: block; font-size: 1.45rem; }
+    .stat span { color: var(--muted); font-size: .88rem; }
+    .panel { padding: 24px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 6px 22px #24375b08; }
+    .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+    h2 { margin: 0; font-size: 1.15rem; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .filter { padding: 7px 12px; color: #53617a; background: #f5f7fb; border: 1px solid var(--line); border-radius: 999px; font: inherit; font-size: .85rem; cursor: pointer; }
+    .filter[aria-pressed="true"] { color: #3155bd; background: #edf1ff; border-color: #cbd6ff; }
+    .assignment-list { display: grid; gap: 11px; }
+    .assignment { padding: 17px; border: 1px solid var(--line); border-radius: 13px; }
+    .assignment-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+    .assignment h3 { margin: 0 0 5px; font-size: 1rem; overflow-wrap: anywhere; }
+    .subject { color: #586b9a; font-size: .84rem; font-weight: 650; }
+    .description { margin: 12px 0; color: #58657a; font-size: .92rem; line-height: 1.5; }
+    .meta { color: var(--muted); font-size: .84rem; }
+    .status-button { flex-shrink: 0; padding: 8px 11px; color: #3155bd; background: #edf1ff; border: 0; border-radius: 8px; font-size: .85rem; font-weight: 650; cursor: pointer; }
+    .status-button:hover { background: #e0e8ff; }
+    .assignment.done { opacity: .74; }
+    .assignment.done h3 { text-decoration: line-through; }
+    .assignment.done .status-button { color: #356947; background: var(--mint); }
+    .empty { padding: 32px 12px; color: var(--muted); text-align: center; line-height: 1.5; }
+    button:focus-visible { outline: 3px solid #b7c7ff; outline-offset: 2px; }
+    .demo-note { margin: 16px 0 0; color: var(--muted); font-size: .82rem; line-height: 1.45; }
+    @media (max-width: 600px) { .topbar, main { width: min(100% - 28px, 1050px); } main { margin-top: 26px; } .tagline { display: none; } .panel { padding: 18px; } .summary { gap: 8px; } .stat { padding: 13px; } .stat strong { font-size: 1.2rem; } .stat span { font-size: .78rem; } .assignment-top { gap: 8px; } .status-button { padding: 7px 8px; font-size: .8rem; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div class="brand"><span class="brand-icon" aria-hidden="true">✦</span> TutorSpace</div>
+      <span class="tagline">Your learning, all in one place.</span>
+    </div>
+  </header>
+  <main>
+    <section class="welcome">
+      <h1>My assignments</h1>
+      <p>Keep track of practice work from your tutoring sessions and celebrate your progress.</p>
+    </section>
+    <section class="summary" aria-label="Assignment summary">
+      <div class="stat"><strong id="totalCount">0</strong><span>Total assignments</span></div>
+      <div class="stat"><strong id="todoCount">0</strong><span>Still to do</span></div>
+      <div class="stat"><strong id="doneCount">0</strong><span>Completed</span></div>
+    </section>
+    <section class="panel" aria-labelledby="assignmentHeading">
+      <div class="section-heading"><h2 id="assignmentHeading">Your tutoring work</h2></div>
+      <div class="filters" aria-label="Filter assignments">
+        <button class="filter" type="button" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter" type="button" data-filter="todo" aria-pressed="false">To do</button>
+        <button class="filter" type="button" data-filter="done" aria-pressed="false">Completed</button>
+      </div>
+      <div class="assignment-list" id="assignmentList" aria-live="polite"></div>
+      <p class="demo-note">These are sample assignments for a demo. A new set appears whenever you refresh the page, and your changes aren’t saved.</p>
+    </section>
+  </main>
+  <script>
+    const assignmentIdeas = [
+      { subject: "Math", title: "Fractions practice", description: "Solve 8 fraction problems. Show how you found each answer.", tutor: "Maya" },
+      { subject: "English", title: "Reading response", description: "Read a short story and write down the main idea and two details that support it.", tutor: "Jordan" },
+      { subject: "Science", title: "Forces around us", description: "Find three examples of pushes or pulls in everyday life and explain what happens.", tutor: "Alex" },
+      { subject: "Math", title: "Times tables review", description: "Practice the 6, 7, and 8 times tables, then make up five questions of your own.", tutor: "Maya" },
+      { subject: "English", title: "Vocabulary builder", description: "Choose five new words from your reading. Write a definition and a sentence for each.", tutor: "Jordan" },
+      { subject: "History", title: "Timeline check-in", description: "Put four important events from this week’s topic in order and add one note about each.", tutor: "Sam" },
+      { subject: "Science", title: "Plant observation", description: "Draw a plant and label its main parts. Write one sentence about what each part does.", tutor: "Alex" },
+      { subject: "Writing", title: "Plan a paragraph", description: "Write a topic sentence and list three details you could use to support it.", tutor: "Sam" },
+      { subject: "Math", title: "Word problem challenge", description: "Create and solve two real-life word problems using addition or subtraction.", tutor: "Maya" },
+      { subject: "English", title: "Grammar detective", description: "Find five verbs in a book or article and rewrite each sentence in your own words.", tutor: "Jordan" }
+    ];
+
+    const filters = document.querySelectorAll(".filter");
+    const list = document.getElementById("assignmentList");
+    let activeFilter = "all";
+    let assignments = createRandomAssignments();
+
+    function createRandomAssignments() {
+      const shuffled = [...assignmentIdeas].sort(() => Math.random() - 0.5);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return shuffled.slice(0, 5).map((idea, index) => {
+        const dueDate = new Date(today);
+        dueDate.setDate(today.getDate() + index + Math.floor(Math.random() * 5));
+        return { ...idea, id: `${Date.now()}-${index}`, dueDate, done: false };
+      }).sort((a, b) => a.dueDate - b.dueDate);
+    }
+
+    function render() {
+      const completed = assignments.filter(item => item.done).length;
+      document.getElementById("totalCount").textContent = assignments.length;
+      document.getElementById("todoCount").textContent = assignments.length - completed;
+      document.getElementById("doneCount").textContent = completed;
+      list.replaceChildren();
+
+      const visible = assignments.filter(item => activeFilter === "all" || (activeFilter === "done" ? item.done : !item.done));
+      if (!visible.length) {
+        const message = activeFilter === "done" ? "No completed assignments yet. You’ve got this!" : "You’re all caught up!";
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent = message;
+        list.append(empty);
+        return;
+      }
+
+      visible.forEach(assignment => {
+        const card = document.createElement("article");
+        card.className = `assignment${assignment.done ? " done" : ""}`;
+        const top = document.createElement("div");
+        top.className = "assignment-top";
+        const heading = document.createElement("div");
+        const title = document.createElement("h3");
+        title.textContent = assignment.title;
+        const subject = document.createElement("span");
+        subject.className = "subject";
+        subject.textContent = assignment.subject;
+        heading.append(title, subject);
+
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "status-button";
+        toggle.textContent = assignment.done ? "✓ Done · Mark to do" : "Mark complete";
+        toggle.setAttribute("aria-pressed", String(assignment.done));
+        toggle.addEventListener("click", () => {
+          assignment.done = !assignment.done;
+          render();
+        });
+        top.append(heading, toggle);
+        card.append(top);
+
+        const description = document.createElement("p");
+        description.className = "description";
+        description.textContent = assignment.description;
+        card.append(description);
+
+        const due = assignment.dueDate.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.textContent = `Due ${due} · From your session with ${assignment.tutor}`;
+        card.append(meta);
+        list.append(card);
+      });
+    }
+
+    filters.forEach(button => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        filters.forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+        render();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
 

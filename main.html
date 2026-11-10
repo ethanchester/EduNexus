@@ -1974,6 +1974,68 @@
             return `<!DOCTYPE html><html><head><base href="${baseHref}"></head><body>${html}</body></html>`;
         }
 
+        function injectGameStorageSupport(html, gameKey) {
+            const storageScript = `
+<script>
+(function() {
+  try {
+    const backingStorage = window.localStorage;
+    const prefix = "__edunexus_game_save_v1__:" + encodeURIComponent(${JSON.stringify(gameKey)}) + ":";
+
+    function storedKeys() {
+      const keys = [];
+      for (let i = 0; i < backingStorage.length; i++) {
+        const key = backingStorage.key(i);
+        if (key && key.startsWith(prefix)) keys.push(key.slice(prefix.length));
+      }
+      return keys;
+    }
+
+    const gameStorage = {
+      get length() { return storedKeys().length; },
+      key(index) { return storedKeys()[Number(index)] ?? null; },
+      getItem(key) { return backingStorage.getItem(prefix + String(key)); },
+      setItem(key, value) { backingStorage.setItem(prefix + String(key), String(value)); },
+      removeItem(key) { backingStorage.removeItem(prefix + String(key)); },
+      clear() { storedKeys().forEach(key => backingStorage.removeItem(prefix + key)); }
+    };
+
+    const storageView = new Proxy(gameStorage, {
+      get(target, property) {
+        if (typeof property === "symbol" || property in target) {
+          const value = Reflect.get(target, property, target);
+          return typeof value === "function" ? value.bind(target) : value;
+        }
+        return typeof property === "string" ? target.getItem(property) ?? undefined : undefined;
+      },
+      set(target, property, value) {
+        if (typeof property !== "string" || property in target) return false;
+        target.setItem(property, value);
+        return true;
+      },
+      deleteProperty(target, property) {
+        if (typeof property !== "string" || property in target) return false;
+        target.removeItem(property);
+        return true;
+      },
+      ownKeys() { return storedKeys(); },
+      getOwnPropertyDescriptor(target, property) {
+        if (typeof property === "string" && ! (property in target) && target.getItem(property) !== null) {
+          return { configurable: true, enumerable: true, writable: true, value: target.getItem(property) };
+        }
+        return Reflect.getOwnPropertyDescriptor(target, property);
+      }
+    });
+
+    Object.defineProperty(window, "localStorage", { configurable: true, get: () => storageView });
+  } catch (e) {}
+})();
+<\/script>`;
+
+            if (/<head[^>]*>/i.test(html)) return html.replace(/<head[^>]*>/i, match => `${match}${storageScript}`);
+            return `${storageScript}${html}`;
+        }
+
         function injectMuteSupport(html, muted = false) {
             const muteScript = `
 <script>
@@ -2243,7 +2305,7 @@
 
                 if (!text) throw new Error("All proxy servers failed, were skipped, or the file does not exist.");
 
-                let html = injectAutoclickSupport(injectMuteSupport(text, isMuted));
+                let html = injectAutoclickSupport(injectMuteSupport(injectGameStorageSupport(text, normalized), isMuted));
                 html = injectBaseHref(html, successBase);
 
                 tab.panel.innerHTML = "";
@@ -2271,7 +2333,7 @@
             const id = "html-preview";
             const title = "HTML Code";
 
-            const prepared = injectBaseHref(injectAutoclickSupport(injectMuteSupport(htmlCode, isMuted)), document.baseURI);
+            const prepared = injectBaseHref(injectAutoclickSupport(injectMuteSupport(injectGameStorageSupport(htmlCode, id), isMuted)), document.baseURI);
 
             if (tabs.has(id)) {
                 const existing = tabs.get(id);
@@ -3187,7 +3249,7 @@
                     const response = await fetch(githubUrl);
                     if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     let html = await response.text();
-                    html = injectBaseHref(injectAutoclickSupport(injectMuteSupport(html, isMuted)), githubUrl);
+                    html = injectBaseHref(injectAutoclickSupport(injectMuteSupport(injectGameStorageSupport(html, id), isMuted)), githubUrl);
                     iframe.srcdoc = html;
                 }
                 tab.panel.replaceChildren(iframe);

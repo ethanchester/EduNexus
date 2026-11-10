@@ -14,11 +14,13 @@
        1. Root Variables & Reset
        ========================================================================== */
         :root {
-            --bg1: #171a2b;
-            --bg2: #49267a;
-            --text: #f5f6fa;
-            --tab-bg: rgba(16, 18, 30, 0.72);
-            --tab-active: rgba(126, 87, 194, 0.35);
+            --bg1: #101525;
+            --bg2: #482b78;
+            --text: #f4f2ff;
+            --tab-bg: rgba(17, 22, 38, 0.82);
+            --tab-active: rgba(139, 92, 246, 0.32);
+            --accent: #a78bfa;
+            --accent-bright: #c4b5fd;
             --sidebar-w: 150px;
             --topbar-h: 58px;
         }
@@ -35,7 +37,9 @@
             font-family: Arial, Helvetica, sans-serif;
             color: var(--text);
             overflow: hidden;
-            background: linear-gradient(135deg, #171a2b 0%, #292044 55%, #49267a 100%);
+            background:
+                radial-gradient(ellipse at 78% 8%, rgba(113, 70, 174, 0.34), transparent 42%),
+                linear-gradient(135deg, #101525 0%, #20213d 56%, #39245f 100%);
             background-attachment: fixed;
         }
 
@@ -337,8 +341,8 @@
         }
 
         .sidebar-btn {
-            background: #000;
-            border: none;
+            background: rgba(18, 23, 40, 0.94);
+            border: 1px solid rgba(196, 181, 253, 0.24);
             color: white;
             border-radius: 8px;
             cursor: pointer;
@@ -347,7 +351,7 @@
             font-size: 22px;
             font-weight: 700;
             text-align: center;
-            text-shadow: -1px 1px 0px #00e6e6, -2px 2px 0px #01cccc;
+            text-shadow: -1px 1px 0px #a78bfa, -2px 2px 0px #7052b8;
             width: 100%;
         }
 
@@ -568,14 +572,46 @@
             transition: all 0.3s ease;
         }
 
+        #gameSearch {
+            padding-right: 60px;
+        }
+
         #gameSearch:focus {
             background: rgba(255, 255, 255, 0.15);
-            border-color: rgb(89, 134, 218);
-            box-shadow: 0 0 15px rgba(89, 134, 218, 0.3);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
         }
 
         #gameSearch::placeholder {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.62);
+        }
+
+        #clear-search-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(16, 21, 37, 0.75);
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        #clear-search-btn:hover {
+            background: rgba(167, 139, 250, 0.35);
+        }
+
+        #search-status {
+            margin: 10px 0 0;
+            color: rgba(255, 255, 255, 0.75);
+            text-align: center;
+            font-size: 14px;
+        }
+
+        #search-status[hidden] {
+            display: none;
         }
 
         #random-game-btn {
@@ -606,7 +642,7 @@
         }
 
         input[type="button"] {
-            background: rgba(112, 76, 175, 0.85);
+            background: rgba(92, 65, 151, 0.88);
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 15px 30px;
             font-size: 16px;
@@ -883,7 +919,7 @@
         #open-bookmarklet-runner-btn {
             font-family: Arial, Helvetica, sans-serif;
             background: none;
-            border: 2px solid rgba(176, 0, 230 0.25);
+            border: 2px solid rgba(167, 139, 250, 0.3);
             border-radius: 8px;
             color: #9b7bea;
             font-size: 18px;
@@ -953,6 +989,20 @@
             }
         }
 
+        :focus-visible {
+            outline: 2px solid var(--accent-bright);
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         /* Square corners give the interface blocks a crisp, rectangular look. */
         .tab-btn,
         .tab-close,
@@ -991,7 +1041,7 @@
             <div class="sidebar" id="sidebar"></div>
 
             <div class="main-content" id="home-content">
-                <h1 class="layered-shadow-text">Dancing Bunny GN</h1>
+                <h1 class="layered-shadow-text">EduNexus</h1>
                 <h2 class="subheading"
                     style="color: rgba(0,0,0,0.7); font-size: 1px; opacity: 0.8; font-weight: normal;">
                     Compiled by Ethan C.
@@ -1010,7 +1060,7 @@
                                 newWin.document.close();
                             }
                         });">
-                        Dancing Bunny GN Doc
+                        EduNexus
                     </button>
                 </h2>
 
@@ -1079,8 +1129,10 @@
                 <br /><br />
 
                 <div class="search-container">
-                    <input type="text" id="gameSearch" placeholder="Search for a game..." oninput="filterGames()">
+                    <input type="text" id="gameSearch" placeholder="Search for a game... (press / to focus)" aria-label="Search games" title="Press / or Ctrl+K to focus; Escape clears the search" oninput="filterGames()">
+                    <button id="clear-search-btn" type="button" aria-label="Clear game search" title="Clear search" hidden>×</button>
                     <button id="random-game-btn" onclick="openRandomGame()">Random Game</button>
+                    <p id="search-status" role="status" aria-live="polite" hidden></p>
                 </div>
 
                 <div id="sections-container"></div>
@@ -2392,9 +2444,13 @@
             const input = document.getElementById("gameSearch");
             const filter = input.value.toLowerCase();
             const sections = document.querySelectorAll(".letter-section");
+            const clearBtn = document.getElementById("clear-search-btn");
+            const status = document.getElementById("search-status");
+            let hasMatches = false;
 
             const randomBtn = document.getElementById("random-game-btn");
             if (randomBtn) randomBtn.style.display = (filter.trim() === "") ? "block" : "none";
+            if (clearBtn) clearBtn.hidden = filter.trim() === "";
 
             sections.forEach(section => {
                 const rows = section.querySelectorAll(".game-row");
@@ -2404,11 +2460,40 @@
                     const text = btn ? btn.value.toLowerCase() : "";
                     const match = text.includes(filter);
                     row.style.display = match ? "" : "none";
-                    if (match) hasVisibleRows = true;
+                    if (match) {
+                        hasVisibleRows = true;
+                        hasMatches = true;
+                    }
                 });
                 section.style.display = hasVisibleRows ? "" : "none";
             });
+
+            if (status) {
+                status.hidden = filter.trim() === "" || hasMatches;
+                status.textContent = hasMatches ? "" : "No games found. Try a different search.";
+            }
         }
+
+        const gameSearch = document.getElementById("gameSearch");
+        document.getElementById("clear-search-btn").addEventListener("click", () => {
+            gameSearch.value = "";
+            filterGames();
+            gameSearch.focus();
+        });
+
+        document.addEventListener("keydown", event => {
+            const target = event.target;
+            const isTyping = target instanceof HTMLElement &&
+                (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
+
+            if ((event.key === "/" || (event.key.toLowerCase() === "k" && (event.ctrlKey || event.metaKey))) && !isTyping) {
+                event.preventDefault();
+                gameSearch.focus();
+            } else if (event.key === "Escape" && document.activeElement === gameSearch && gameSearch.value) {
+                gameSearch.value = "";
+                filterGames();
+            }
+        });
 
         document.getElementById("open-runner-btn").addEventListener("click", openRunnerTab);
         document.getElementById("open-recent-btn").addEventListener("click", openRecentGamesTab);

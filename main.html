@@ -125,7 +125,8 @@
         #refresh-favicon-btn:hover,
         #bgrun-btn:hover,
         #mute-btn:hover,
-        #info-btn:hover {
+        #info-btn:hover,
+        #fullscreen-btn:hover {
             transform: translateY(-1px);
             border-color: rgba(255, 255, 255, 0.24);
             background: rgba(255, 255, 255, 0.11);
@@ -198,7 +199,8 @@
         #refresh-favicon-btn,
         #bgrun-btn,
         #mute-btn,
-        #info-btn {
+        #info-btn,
+        #fullscreen-btn {
             height: 42px;
             width: 48px;
             border-radius: 10px;
@@ -220,7 +222,8 @@
         #refresh-favicon-btn,
         #bgrun-btn,
         #mute-btn,
-        #info-btn {
+        #info-btn,
+        #fullscreen-btn {
             margin-left: 6px;
         }
 
@@ -235,7 +238,8 @@
         #refresh-favicon-btn svg,
         #bgrun-btn svg,
         #mute-btn svg,
-        #info-btn svg {
+        #info-btn svg,
+        #fullscreen-btn svg {
             width: 22px;
             height: 22px;
             display: block;
@@ -371,6 +375,11 @@
             overflow: hidden;
         }
 
+        #content-area:fullscreen {
+            width: 100vw;
+            height: 100vh;
+        }
+
         .bg-open-hint {
             margin: 10px 0 0;
             font-size: 14px;
@@ -423,6 +432,29 @@
             min-height: 100%;
             padding: 20px 22px 50px;
             position: relative;
+        }
+
+        #scroll-top-btn {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 1500;
+            width: 46px;
+            height: 46px;
+            border: 1px solid rgba(196, 181, 253, 0.55);
+            background: rgba(35, 28, 58, 0.94);
+            color: #e8ddff;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #scroll-top-btn:hover {
+            background: #704caf;
+        }
+
+        #scroll-top-btn[hidden] {
+            display: none;
         }
 
 
@@ -483,6 +515,96 @@
 
         .admin-site-panel[hidden] {
             display: none;
+        }
+
+        .site-settings-panel {
+            width: min(600px, 100%);
+            margin: 12px auto 18px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+        }
+
+        .site-settings-panel[hidden] {
+            display: none;
+        }
+
+        .site-settings-panel label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .site-settings-panel select {
+            width: 100%;
+            padding: 9px;
+            color: white;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .site-settings-panel select option {
+            color: white;
+            background: #2e3244;
+        }
+
+        .site-settings-panel button {
+            margin: 12px 8px 0 0;
+            padding: 9px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            background: #704caf;
+            cursor: pointer;
+        }
+
+        body.theme-ocean {
+            --bg1: #071d2b;
+            --bg2: #124b68;
+            --accent: #5dd6d0;
+            --accent-bright: #a5f3eb;
+            background: radial-gradient(ellipse at 78% 8%, rgba(34, 211, 196, 0.22), transparent 42%),
+                linear-gradient(135deg, #071d2b 0%, #12364b 56%, #155b70 100%);
+        }
+
+        body.theme-rose {
+            --bg1: #24131e;
+            --bg2: #71334f;
+            --accent: #fb91b5;
+            --accent-bright: #ffc2d8;
+            background: radial-gradient(ellipse at 78% 8%, rgba(244, 114, 182, 0.24), transparent 42%),
+                linear-gradient(135deg, #24131e 0%, #482238 56%, #71334f 100%);
+        }
+
+        body.high-contrast {
+            --text: #ffffff;
+            --accent-bright: #ffffff;
+        }
+
+        body.high-contrast .tab-btn,
+        body.high-contrast input[type="button"],
+        body.high-contrast .sidebar-btn,
+        body.high-contrast .game-site-btn {
+            border-color: rgba(255, 255, 255, 0.75);
+        }
+
+        body.compact-layout .letter-section {
+            margin-bottom: 18px;
+            min-height: 0;
+        }
+
+        body.compact-layout input[type="button"] {
+            padding: 10px 16px;
+        }
+
+        body.reduce-motion *,
+        body.reduce-motion *::before,
+        body.reduce-motion *::after {
+            scroll-behavior: auto !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
         }
 
         .admin-site-panel label {
@@ -1011,6 +1133,7 @@
         #bgrun-btn,
         #mute-btn,
         #info-btn,
+        #fullscreen-btn,
         .sidebar-btn,
         .game-site-btn,
         #gameSearch,
@@ -1120,6 +1243,23 @@
                     <button id="admin-site-cancel" type="button">Cancel</button>
                     <div id="admin-site-list" aria-label="Saved custom game sites"></div>
                 </form>
+                <div class="subheading">
+                    <button id="site-settings-btn" class="game-site-btn" type="button" aria-expanded="false">Settings</button>
+                </div>
+                <section id="site-settings-panel" class="site-settings-panel" aria-label="Site settings" hidden>
+                    <strong>Preferences</strong>
+                    <label for="theme-select">Color theme</label>
+                    <select id="theme-select">
+                        <option value="purple">Purple night</option>
+                        <option value="ocean">Ocean</option>
+                        <option value="rose">Rose</option>
+                    </select>
+                    <label><input id="compact-layout-toggle" type="checkbox"> Compact game list</label>
+                    <label><input id="high-contrast-toggle" type="checkbox"> Higher contrast</label>
+                    <label><input id="reduce-motion-toggle" type="checkbox"> Reduce animations</label>
+                    <label><input id="favorites-only-toggle" type="checkbox"> Show favorites only</label>
+                    <button id="reset-settings-btn" type="button">Reset preferences</button>
+                </section>
 
                 <h2 class="subheading">
                     Make a sugestion:
@@ -1137,6 +1277,7 @@
 
                 <div id="sections-container"></div>
             </div>
+            <button id="scroll-top-btn" type="button" title="Back to top" aria-label="Back to top" hidden>↑</button>
         </div>
     </div>
 
@@ -1369,11 +1510,55 @@
             tabBar.appendChild(btn);
         }
 
+        const ICON_FULLSCREEN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>`;
+
+        function updateFullscreenButton() {
+            const btn = document.getElementById("fullscreen-btn");
+            if (!btn) return;
+            const active = !!document.fullscreenElement;
+            btn.title = active ? "Exit Fullscreen (Esc)" : "Enter Fullscreen (F)";
+            btn.setAttribute("aria-label", btn.title);
+            btn.setAttribute("aria-pressed", active ? "true" : "false");
+        }
+
+        function toggleFullscreen() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen?.().catch(() => { });
+                return;
+            }
+
+            const target = contentArea;
+            if (!target.requestFullscreen) return;
+            target.requestFullscreen().catch(() => {
+                const btn = document.getElementById("fullscreen-btn");
+                if (!btn) return;
+                btn.title = "Fullscreen is not available here";
+                setTimeout(updateFullscreenButton, 1800);
+            });
+        }
+
+        function ensureFullscreenButton() {
+            if (document.getElementById("fullscreen-btn")) return;
+            const btn = document.createElement("button");
+            btn.id = "fullscreen-btn";
+            btn.type = "button";
+            btn.innerHTML = ICON_FULLSCREEN;
+            btn.title = "Enter Fullscreen (F)";
+            btn.setAttribute("aria-label", btn.title);
+            btn.onclick = toggleFullscreen;
+            tabBar.appendChild(btn);
+        }
+
+        document.addEventListener("fullscreenchange", updateFullscreenButton);
+
         function ensureMuteButton() {
             ensureAutoclickButton();
             ensureRefreshFaviconButton();
             ensureBackgroundRunButton();
             ensureInfoButton();
+            ensureFullscreenButton();
             if (document.getElementById("mute-btn")) return;
             const btn = document.createElement("button");
             btn.id = "mute-btn";
@@ -2141,7 +2326,7 @@
 
             if (recent.length === 0) {
                 list.style.display = "block";
-                if (count) count.textContent = " ";
+                if (count) count.textContent = "No recent games";
                 const empty = document.createElement("div");
                 empty.className = "recent-empty";
                 empty.textContent = "No games played yet";
@@ -2150,7 +2335,7 @@
             }
 
             list.style.display = "";
-            if (count) count.textContent = ` `;
+            if (count) count.textContent = `${recent.length} game${recent.length === 1 ? "" : "s"} in your history`;
 
             recent.forEach((file, i) => {
                 const card = document.createElement("button");
@@ -2192,12 +2377,20 @@
     <div class="recent-inner">
       <h2 class="recent-header">Recently Played</h2>
       <p class="recent-subheader" id="recent-count"></p>
+      <div class="runner-controls" style="justify-content: center; margin-bottom: 18px;">
+        <button type="button" id="clear-recent-btn">Clear Recent Games</button>
+      </div>
       <div class="recent-list" id="recent-list"></div>
     </div>
   `;
 
             panel.appendChild(wrapper);
             contentArea.appendChild(panel);
+            panel.querySelector("#clear-recent-btn").addEventListener("click", () => {
+                recent = [];
+                saveRecent();
+                renderRecentPane();
+            });
 
             const tab = { id, title, button, panel };
             tabs.set(id, tab);
@@ -2330,7 +2523,7 @@
                 e.stopPropagation();
                 if (starred.has(file)) starred.delete(file);
                 else starred.add(file);
-                saveStarred(); syncStarButtons(); renderFavoritesSection();
+                saveStarred(); syncStarButtons(); renderFavoritesSection(); filterGames();
             };
 
             const btn = document.createElement("input");
@@ -2458,7 +2651,9 @@
                 rows.forEach(row => {
                     const btn = row.querySelector('input[type="button"]');
                     const text = btn ? btn.value.toLowerCase() : "";
-                    const match = text.includes(filter);
+                    const matchesSearch = text.includes(filter);
+                    const matchesFavorites = !preferences.favoritesOnly || starred.has(row.dataset.file);
+                    const match = matchesSearch && matchesFavorites;
                     row.style.display = match ? "" : "none";
                     if (match) {
                         hasVisibleRows = true;
@@ -2481,12 +2676,32 @@
             gameSearch.focus();
         });
 
+        const scrollTopButton = document.getElementById("scroll-top-btn");
+        const homePane = document.getElementById("home-pane");
+        homePane.addEventListener("scroll", () => {
+            scrollTopButton.hidden = homePane.scrollTop < 320;
+        });
+        scrollTopButton.addEventListener("click", () => {
+            homePane.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
         document.addEventListener("keydown", event => {
             const target = event.target;
             const isTyping = target instanceof HTMLElement &&
                 (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
 
-            if ((event.key === "/" || (event.key.toLowerCase() === "k" && (event.ctrlKey || event.metaKey))) && !isTyping) {
+            if ((event.ctrlKey || event.metaKey) && event.shiftKey && !isTyping &&
+                (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+                event.preventDefault();
+                const appTabs = ["home", ...tabOrder.filter(id => tabs.has(id))];
+                const activeId = document.querySelector(".tab-btn.active")?.id.replace(/^tab-/, "") || "home";
+                const currentIndex = Math.max(0, appTabs.indexOf(activeId));
+                const direction = event.key === "ArrowRight" ? 1 : -1;
+                activateTab(appTabs[(currentIndex + direction + appTabs.length) % appTabs.length]);
+            } else if (event.key.toLowerCase() === "f" && !isTyping && !event.altKey && !event.ctrlKey && !event.metaKey) {
+                event.preventDefault();
+                toggleFullscreen();
+            } else if ((event.key === "/" || (event.key.toLowerCase() === "k" && (event.ctrlKey || event.metaKey))) && !isTyping) {
                 event.preventDefault();
                 gameSearch.focus();
             } else if (event.key === "Escape" && document.activeElement === gameSearch && gameSearch.value) {
@@ -2708,6 +2923,72 @@
 
         let editingCustomSiteId = null;
 
+        const PREFERENCES_KEY = "dancing-bunny-preferences-v1";
+        const defaultPreferences = {
+            theme: "purple",
+            compact: false,
+            highContrast: false,
+            reduceMotion: false,
+            favoritesOnly: false
+        };
+        let preferences = { ...defaultPreferences };
+        try {
+            const savedPreferences = JSON.parse(localStorage.getItem(PREFERENCES_KEY) || "{}");
+            if (savedPreferences && typeof savedPreferences === "object") {
+                preferences = { ...preferences, ...savedPreferences };
+            }
+        } catch (e) { }
+
+        function applyPreferences() {
+            document.body.classList.toggle("theme-ocean", preferences.theme === "ocean");
+            document.body.classList.toggle("theme-rose", preferences.theme === "rose");
+            document.body.classList.toggle("compact-layout", !!preferences.compact);
+            document.body.classList.toggle("high-contrast", !!preferences.highContrast);
+            document.body.classList.toggle("reduce-motion", !!preferences.reduceMotion);
+
+            document.getElementById("theme-select").value = preferences.theme;
+            document.getElementById("compact-layout-toggle").checked = !!preferences.compact;
+            document.getElementById("high-contrast-toggle").checked = !!preferences.highContrast;
+            document.getElementById("reduce-motion-toggle").checked = !!preferences.reduceMotion;
+            document.getElementById("favorites-only-toggle").checked = !!preferences.favoritesOnly;
+            filterGames();
+        }
+
+        function savePreferences() {
+            try { localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences)); } catch (e) { }
+            applyPreferences();
+        }
+
+        function setupSiteSettings() {
+            const button = document.getElementById("site-settings-btn");
+            const panel = document.getElementById("site-settings-panel");
+            button.addEventListener("click", () => {
+                panel.hidden = !panel.hidden;
+                button.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
+            });
+
+            document.getElementById("theme-select").addEventListener("change", event => {
+                preferences.theme = event.target.value;
+                savePreferences();
+            });
+            [
+                ["compact-layout-toggle", "compact"],
+                ["high-contrast-toggle", "highContrast"],
+                ["reduce-motion-toggle", "reduceMotion"],
+                ["favorites-only-toggle", "favoritesOnly"]
+            ].forEach(([id, key]) => {
+                document.getElementById(id).addEventListener("change", event => {
+                    preferences[key] = event.target.checked;
+                    savePreferences();
+                });
+            });
+            document.getElementById("reset-settings-btn").addEventListener("click", () => {
+                preferences = { ...defaultPreferences };
+                savePreferences();
+            });
+            applyPreferences();
+        }
+
         function renderAdminSiteList() {
             const list = document.getElementById("admin-site-list");
             if (!list) return;
@@ -2844,6 +3125,7 @@
             });
         }
         setupAdminSiteEditor();
+        setupSiteSettings();
         renderGameSites();
         loadRemoteGameSites();
 
@@ -2970,7 +3252,7 @@
             if (typeof files === "undefined") {
                 setTimeout(initWhenReady, 50); return;
             }
-            ensureHomeTab(); ensureMuteButton(); generateAllSections(); renderGameSites();
+            ensureHomeTab(); ensureMuteButton(); generateAllSections(); renderGameSites(); filterGames();
             activateTab("home"); saveMuteAndApply(); document.title = "New tab";
         }
         initWhenReady();

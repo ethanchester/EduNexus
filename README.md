@@ -52,4 +52,4 @@ We have
 
 * When I update, redeploy (Im too lazy to explain this part, search it up)
 <hl>
-Credits to UGS, Gn-Math, Bubby, A Turtle, and every thing else is mine, except for that chat, I dont know who made that.
+Credits to UGS, Gn-Math, Bubble,Itorl and every thing else is mine, except for that chat, I dont know who made that.

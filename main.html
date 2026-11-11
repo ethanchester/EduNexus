@@ -4917,7 +4917,24 @@ ${icons}
             const tab = openLoadingTab(id, name);
             if (tab.siteLoading || tab.panel.querySelector("iframe")) return;
             tab.siteLoading = true;
-            fetchAndInjectProxy(url, tab, name, id).finally(() => { tab.siteLoading = false; });
+
+            tab.panel.innerHTML = "";
+            const iframe = document.createElement("iframe");
+            iframe.className = "game-frame";
+            iframe.title = name;
+            iframe.src = url;
+            iframe.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups allow-modals");
+            iframe.referrerPolicy = "no-referrer";
+            applyMuteToIframe(iframe);
+            iframe.addEventListener("load", () => {
+                tab.siteLoading = false;
+                setTabStatus(id, isTabActive(id) ? null : "ready");
+            }, { once: true });
+            iframe.addEventListener("error", () => {
+                tab.siteLoading = false;
+                setTabStatus(id, null);
+            }, { once: true });
+            tab.panel.appendChild(iframe);
         }
 
         async function fetchRawGitSource(url) {

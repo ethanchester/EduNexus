@@ -6,8 +6,28 @@
 </head>
 <body>
   <button onclick="openme()">Click me</button>
+
   <script>
-    function openme(){
-      URL="
+    async function openme() {
+      const url = "https://raw.githubusercontent.com/ethanchester/EduNexus/refs/heads/main/main.html";
+      
+      // Open the tab immediately to avoid popup blockers
+      const tab = window.open("", "_blank");
+      
+      try {
+        const response = await fetch(url);
+        const html = await response.text();
+        
+        // Write the fetched HTML into the new tab
+        tab.document.open();
+        tab.document.write(html);
+        tab.document.close();
+        tab.focus();
+      } catch (error) {
+        tab.close();
+        console.error("Failed to load HTML:", error);
+      }
+    }
+  </script>
 </body>
 </html>

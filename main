@@ -1511,12 +1511,10 @@
             <div class="main-content" id="home-content">
                 <h1 class="layered-shadow-text">EduNexus</h1>
                 <h2 class="subheading"
-                    style="color: rgba(0,0,0,0.7); font-size: 1px; opacity: 0.8; font-weight: normal;">
-                    Made by a Turtle
+                    style="color: rgba(0,0,0,0.7); font-size: 1px; opacity: 0.8; font-weight: normal
                 </h2>
 
-                <h2 class="subheading">Compiled by Ethan C</h2>
-                <p class="subheading"><a href="mailto:echester@students.wcpss.net">echester@students.wcpss.net</a></p>
+                <h2 class="subheading">Compiled by an Armadillo</h2>
 
                 <br /><br />
 

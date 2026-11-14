@@ -4812,13 +4812,7 @@ ${icons}
             const tab = openLoadingTab(id, title);
 
             tab.panel.innerHTML = `
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc3e_owZjRo1J2jkFh9bLJFNkLJaUn4YCpqJTQrLYTGTdpJkw/viewform?embed=true" 
-                class="game-frame" 
-                frameborder="0" 
-                marginheight="0" 
-                marginwidth="0">
-            Loading…
-        </iframe>
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc3e_owZjRo1J2jkFh9bLJFNkLJaUn4YCpqJTQrLYTGTdpJkw/viewform?embedded=true" width="640" height="847" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
     `;
 
             activateTab(id);

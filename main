@@ -4812,7 +4812,7 @@ ${icons}
             const tab = openLoadingTab(id, title);
 
             tab.panel.innerHTML = `
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSea-JfAh1SJ8DrR4AVUNAJfdAgQtYJ07lq-B9bmNaKebKQOlQ/viewform?embedded=true" 
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc3e_owZjRo1J2jkFh9bLJFNkLJaUn4YCpqJTQrLYTGTdpJkw/viewform?embed=true" 
                 class="game-frame" 
                 frameborder="0" 
                 marginheight="0" 

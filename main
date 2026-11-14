@@ -1533,7 +1533,7 @@
                 <button type="button" id="open-chat-btn" class="corner-link"><span>CHAT</span></button>
                 <a id="github-link" class="corner-link" href="https://github.com/ethanchester/EduNexus" target="_blank" rel="noopener noreferrer"
                     title="View the source on GitHub" aria-label="View the source on GitHub">
-                <a id="github-link" class="corner-link" href="https://github.com/ethanchester/EduNexus/main/WhatsNew.md" target="_blank" rel="noopener noreferrer"
+                <a type="button" href="https://github.com/ethanchester/EduNexus/main/WhatsNew.md" target="_blank" rel="noopener noreferrer"
                     title="View Whats NEW! on GitHub" aria-label="View New Stuff on GitHub">
                     <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                         <path fill="currentColor"

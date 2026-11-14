@@ -1514,8 +1514,8 @@
                     style="color: rgba(0,0,0,0.7); font-size: 1px; opacity: 0.8; font-weight: normal
                 </h2>
 
-                <h2 style="font-size: 100px;">Compiled by an Armadillo</h2>
-                <a href="https://raw.githubusercontent.com/ethanchester/EduNexus/refs/heads/main/WhatsNew.md" style="font-size: 100px;">Whats New?</a>
+                <h2 style="font-size: 25px;">Compiled by an Armadillo</h2>
+                <a href="https://raw.githubusercontent.com/ethanchester/EduNexus/refs/heads/main/WhatsNew.md" style="font-size: 25px;">Whats New?</a>
                 <br /><br />
 
                 <div class="search-container">

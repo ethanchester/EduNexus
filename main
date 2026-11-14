@@ -1515,7 +1515,7 @@
                 </h2>
 
                 <h2 style="font-size: 10px;">Compiled by an Armadillo</h2>
-                <a href="https://raw.githubusercontent.com/ethanchester/EduNexus/refs/heads/main/WhatsNew.md" style="font-size: 10px;">Whats New?</a>
+                <a href="https://raw.githubusercontent.com/ethanchester/EduNexus/refs/heads/main/WhatsNew.md" class="subheading">Whats New?</a>
                 <br /><br />
 
                 <div class="search-container">

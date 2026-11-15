@@ -6,8 +6,8 @@ VERSION 2.3:
 MUSIC!!! (:
 (BIG UPDATE YALL 🎉😄)
 
--since the websites don't want to connect i made sure that you open them in a new tab
+- since the websites don't want to connect i made sure that you open them in a new tab
 
--panic button
+- panic button
 --------------------------------------------------------------------------------------------------------------------------------------
 Man i dont think anybody looks at this....

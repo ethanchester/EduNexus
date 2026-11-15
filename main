@@ -5025,7 +5025,7 @@ ${icons}
     <script>
         document.addEventListener("keydown", (event) => {
   if (event.key === "`") {
-    window.location.href = "chrome://newtab"
+    window.location.href = "https://google.com/"
   }
 });
 </body>

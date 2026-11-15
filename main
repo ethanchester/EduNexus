@@ -5020,10 +5020,14 @@ ${icons}
             );
             if (files.length === 0) container.textContent = "Couldn't load the game list. Try refreshing.";
         }
-        init();
+        init()
     </script>
-
-
+    <script>
+        document.addEventListener("keydown", (event) => {
+  if (event.key === "`") {
+    window.location.href = "chrome://newtab"
+  }
+});
 </body>
 
 </html>

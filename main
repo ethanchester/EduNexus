@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+loading...<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1531,6 +1531,13 @@
                 <button type="button" id="open-bookmarklet-runner-btn" class="corner-link"><span>Bookmarklet Runner</span></button>
                 <button type="button" id="open-form-btn" class="corner-link"><span>Make a Suggestion</span></button>
                 <button type="button" id="open-chat-btn" class="corner-link"><span>CHAT</span></button>
+                <button
+                  type="button"
+                  class="corner-link"
+                  onclick="window.open('https://cdn.jsdelivr.net/gh/ethanchester/EduNexus@main/WhatsNew.md', '_blank', 'noopener,noreferrer')"
+                >
+                  <span>Check out whats new</span>
+                </button>
                 <a id="github-link" class="corner-link" href="https://github.com/ethanchester/EduNexus" target="_blank" rel="noopener noreferrer"
                     title="View the source on GitHub" aria-label="View the source on GitHub">
                     <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -1539,13 +1546,6 @@
                     </svg>
                     <span>Github</span>
                 </a>
-               <button
-                  type="button"
-                  class="corner-link"
-                  onclick="window.open('https://cdn.jsdelivr.net/gh/ethanchester/EduNexus@main/WhatsNew.md', '_blank', 'noopener,noreferrer')"
-                >
-                  <span>Check out whats new</span>
-                </button>
             </div>
             <button type="button" id="corner-links-toggle" aria-controls="corner-links" aria-expanded="false" onclick="toggleCornerLinks()">
                 ▲ Quick Links

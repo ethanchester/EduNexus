@@ -4906,30 +4906,8 @@ ${icons}
         }
 
         function openWebsite(name, url) {
-            const id = siteTabId("website", url);
-            const tab = openLoadingTab(id, name);
-            if (tab.siteLoading || tab.panel.querySelector("iframe")) return;
-            tab.siteLoading = true;
-
-            tab.panel.innerHTML = "";
-            const iframe = document.createElement("iframe");
-            iframe.className = "game-frame";
-            iframe.title = name;
-            iframe.src = url;
-            iframe.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups allow-modals");
-            iframe.referrerPolicy = "no-referrer";
-            applyMuteToIframe(iframe);
-            iframe.addEventListener("load", () => {
-                tab.siteLoading = false;
-                setTabStatus(id, isTabActive(id) ? null : "ready");
-            }, { once: true });
-            iframe.addEventListener("error", () => {
-                tab.siteLoading = false;
-                setTabStatus(id, null);
-            }, { once: true });
-            tab.panel.appendChild(iframe);
-        }
-
+                window.open('url', '_blank', 'noopener,noreferrer');
+            }
         async function fetchRawGitSource(url) {
             const bridges = [
                 url,

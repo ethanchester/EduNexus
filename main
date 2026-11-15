@@ -1539,7 +1539,13 @@
                     </svg>
                     <span>Github</span>
                 </a>
-                <button type="button" class="corner-link" onclick="window.open('https://cdn.jsdelivr.net/gh/ethanchester/EduNexus@main/WhatsNew.md','_blank','noopener, noreferrer) class="corner-link"><span>Check out whats new</span></button>
+               <button
+                  type="button"
+                  class="corner-link"
+                  onclick="window.open('https://cdn.jsdelivr.net/gh/ethanchester/EduNexus@main/WhatsNew.md', '_blank', 'noopener,noreferrer')"
+                >
+                  <span>Check out whats new</span>
+                </button>
             </div>
             <button type="button" id="corner-links-toggle" aria-controls="corner-links" aria-expanded="false" onclick="toggleCornerLinks()">
                 ▲ Quick Links

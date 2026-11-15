@@ -5024,10 +5024,11 @@ ${icons}
     </script>
     <script>
         document.addEventListener("keydown", (event) => {
-  if (event.key === "`") {
-    window.location.href = "https://google.com/"
-  }
-});
+            if (event.key === "`") {
+            window.location.href = "https://google.com/"
+          }
+        });
+    </script>
 </body>
 
 </html>

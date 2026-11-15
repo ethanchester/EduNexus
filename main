@@ -4830,10 +4830,10 @@ ${icons}
                 activateTab(id);
                 return;
             }
-
+            const html = fetch("https://raw.githubusercontent.com/ethanchester/EduNexus/refs/heads/main/chat")
             const tab = openLoadingTab(id, title);
             tab.panel.innerHTML = `
-        <iframe src="https://chat.edgeone.dev" class="game-frame" title="CHAT" frameborder="0"></iframe>
+        <iframe srcdoc= html class="game-frame" title="CHAT" frameborder="0"></iframe>
     `;
         }
 

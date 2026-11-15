@@ -4906,7 +4906,7 @@ ${icons}
         }
 
         function openWebsite(name, url) {
-                window.open('url', '_blank', 'noopener,noreferrer');
+                window.open(url, '_blank', 'noopener,noreferrer');
             }
         async function fetchRawGitSource(url) {
             const bridges = [

@@ -24,32 +24,22 @@ We have
 * <a href="https://nexusedu.edgeone.dev">EduNexus</a>
 <hl>
 <h1>How do I deploy this? </h1>
-* Fork this Repository
-  
-* Go to <a href="https://www.tencentcloud.com/login?s_url=https%3A%2F%2Fconsole.tencentcloud.com%2Fedgeone%2Fmakers" target="_blank">Tencent Cloud Edgeone Login</a>
+* Fork this Repository (You need a github account)
 
-* Click "Create Project"
+* Go to https://jsdelivr.com/github
 
-* Select "Import Git Repository"
+* In the fork, click on hide.svg
 
-* Click your forked  Repository
+* Copy the url for that
 
-* Set name to whatever you want
+* Put the url in the GITHUB input
 
-* Click the blue button at the bottom
+* Copy the output url
 
-* Wait until a popup shows "Successful Deployment!"
-
-* On your project click "Custom Domains"
-
-* Wait until you see the blue url
-
-* Click the url
-
-* BOOM!
+* Go to url, and click on screen
 
 * Share with your friends!
 
-* When I update, redeploy (Im too lazy to explain this part, search it up)
+* When I update, sync the fork
 <hl>
 Credits to UGS, Gn-Math, Bubble,Itorl and every thing else is mine, except for that chat, I dont know who made that.

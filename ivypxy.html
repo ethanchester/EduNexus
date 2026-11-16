@@ -1,0 +1,31 @@
+<DOCTYPE html>
+<html>
+  <head>
+    <script>
+      funtion open(){
+        const ivy = window.open("about:blank","_blank");
+        if (ivy){
+          ivy.document.write('<!doctype html><html lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Ivy</title><style>body,html{margin:0;padding:0;height:100%;overflow:hidden}iframe{position:fixed;top:0;left:0;width:100vw;height:100vh;border:none}</style></head><body><iframe src=https://cdn.jsdelivr.net/gh/3cfl/ivy-static@main/index.xml#/l title="Full Screen Content"></iframe></body></html>');
+          ivy.document.close();
+        }
+      }
+    </script>
+    <style>
+      .fullscreen-btn {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        background-color: #007BFF;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <button onclick="open()" class="fullscreen-btn">Click On Screen to open IVY</button>
+  </body>
+</html>

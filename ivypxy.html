@@ -44,7 +44,6 @@
 
     <script>
       document.getElementById("open-ivy").addEventListener("click", () => {
-        // Open synchronously from the click handler so popup blockers allow it.
         const ivy = window.open("about:blank", "_blank");
 
         if (!ivy) {
@@ -52,26 +51,24 @@
           return;
         }
 
-        const page = `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ivy</title>
-  <style>
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
-    iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
-  </style>
-</head>
-<body>
-  <iframe src="https://cdn.jsdelivr.net/gh/3cfl/ivy-static@main/index.xml#/l" title="Full Screen Content" allow="fullscreen" allowfullscreen></iframe>
-</body>
-</html>`;
-
-        const pageUrl = URL.createObjectURL(new Blob([page], { type: "text/html" }));
+        // Build the popup DOM directly; no HTML string or document.write is needed.
         ivy.opener = null;
-        ivy.location.replace(pageUrl);
-        ivy.addEventListener("load", () => URL.revokeObjectURL(pageUrl), { once: true });
+        const popupDocument = ivy.document;
+        popupDocument.title = "Ivy";
+        popupDocument.documentElement.lang = "en";
+        popupDocument.documentElement.style.cssText =
+          "width:100%;height:100%;margin:0;overflow:hidden";
+        popupDocument.body.style.cssText =
+          "width:100%;height:100%;margin:0;overflow:hidden";
+
+        const frame = popupDocument.createElement("iframe");
+        frame.src = "https://cdn.jsdelivr.net/gh/3cfl/ivy-static@main/index.xml#/l";
+        frame.title = "Full Screen Content";
+        frame.allow = "fullscreen";
+        frame.allowFullscreen = true;
+        frame.style.cssText =
+          "position:fixed;inset:0;width:100%;height:100%;border:0";
+        popupDocument.body.appendChild(frame);
       });
     </script>
   </body>

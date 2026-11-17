@@ -80,17 +80,30 @@
           popupDocument.documentElement.style.cssText =
             "width:100%;height:100%;margin:0;overflow:hidden";
           popupDocument.body.style.cssText =
-            "width:100%;height:100%;margin:0;overflow:hidden";
+            "width:100%;height:100%;margin:0;overflow:hidden;background:#fff";
 
           const frame = popupDocument.createElement("iframe");
-          frame.src = url;
-          frame.title = "IVY content";
+          frame.src = "https://www.wcpss.net/";
+          frame.title = "WCPSS";
           frame.allow = "fullscreen";
           frame.allowFullscreen = true;
           frame.style.cssText =
-            "position:fixed;inset:0;width:100%;height:100%;border:0";
+            "position:fixed;inset:0;width:100%;height:100%;border:0;opacity:1;transition:opacity 500ms ease;background:#fff;";
 
           popupDocument.body.appendChild(frame);
+
+          window.setTimeout(() => {
+            if (ivyWindow.closed) return;
+
+            frame.style.opacity = "0";
+            window.setTimeout(() => {
+              if (ivyWindow.closed) return;
+
+              frame.src = url;
+              frame.title = "IVY content";
+              frame.style.opacity = "1";
+            }, 500);
+          }, 3000);
         } catch {
           ivyWindow.close();
           window.alert("The new tab could not be opened. Please try again.");

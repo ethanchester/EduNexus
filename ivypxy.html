@@ -82,28 +82,29 @@
           popupDocument.body.style.cssText =
             "width:100%;height:100%;margin:0;overflow:hidden;background:#fff";
 
-          const frame = popupDocument.createElement("iframe");
-          frame.src = "https://www.wcpss.net/";
-          frame.title = "WCPSS";
-          frame.allow = "fullscreen";
-          frame.allowFullscreen = true;
-          frame.style.cssText =
-            "position:fixed;inset:0;width:100%;height:100%;border:0;opacity:1;transition:opacity 500ms ease;background:#fff;";
+          const ivyFrame = popupDocument.createElement("iframe");
+          ivyFrame.src = url;
+          ivyFrame.title = "IVY content";
+          ivyFrame.allow = "fullscreen";
+          ivyFrame.allowFullscreen = true;
+          ivyFrame.style.cssText =
+            "position:fixed;inset:0;width:100%;height:100%;border:0;opacity:1;z-index:0;background:#fff;";
 
-          popupDocument.body.appendChild(frame);
+          const wcpssFrame = popupDocument.createElement("iframe");
+          wcpssFrame.src = "https://www.wcpss.net/";
+          wcpssFrame.title = "WCPSS";
+          wcpssFrame.allow = "fullscreen";
+          wcpssFrame.allowFullscreen = true;
+          wcpssFrame.style.cssText =
+            "position:fixed;inset:0;width:100%;height:100%;border:0;opacity:1;z-index:1;background:#fff;";
 
-          window.setTimeout(() => {
-            if (ivyWindow.closed) return;
+          popupDocument.body.appendChild(ivyFrame);
+          popupDocument.body.appendChild(wcpssFrame);
 
-            frame.style.opacity = "0";
-            window.setTimeout(() => {
-              if (ivyWindow.closed) return;
-
-              frame.src = url;
-              frame.title = "IVY content";
-              frame.style.opacity = "1";
-            }, 500);
-          }, 3000);
+          const overlay = popupDocument.createElement("div");
+          overlay.style.cssText =
+            "position:fixed;inset:0;z-index:2;pointer-events:none;background:transparent;";
+          popupDocument.body.appendChild(overlay);
         } catch {
           ivyWindow.close();
           window.alert("The new tab could not be opened. Please try again.");
